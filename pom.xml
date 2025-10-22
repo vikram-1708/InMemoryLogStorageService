@@ -9,12 +9,11 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <!-- Spring Boot Parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.5</version>
-        <relativePath/> <!-- lookup parent from Maven Central -->
+        <relativePath/>
     </parent>
 
     <properties>
@@ -22,20 +21,15 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Boot Web (REST API, embedded Tomcat, Jackson JSON) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!-- Lombok (optional, for cleaner code with @Getter, @Setter, etc.) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- Spring Boot Test (JUnit, MockMvc, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -45,7 +39,6 @@
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin (for building fat jar & running app) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
