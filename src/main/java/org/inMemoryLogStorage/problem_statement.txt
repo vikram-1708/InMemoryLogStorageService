@@ -1,0 +1,17 @@
+Problem Statement:-
+
+Assignment: In-Memory Log Storage
+Build an application that stores logs in memory (no external database). Continuous logs are coming from multiple microservices and have the following fields:
+
+timestamp (time at which the log was generated)
+serviceName (name of the microservice)
+hostId (identifier of the host where the service is running)
+logMessage (the log text)
+
+Requirements:-
+1. The application should support concurrent log ingestion and queries.
+2. Must support the following queries:
+   a. Logs of a given serviceName between time t1 and t2.
+   b. Logs of a given serviceName from a given hostId between time t1 and t2.
+   c. Logs of a given hostId between time t1 and t2.
+3. Code should be runnable and follow clean code guidelines (readability, structure, maintainability).
