@@ -1,7 +1,7 @@
-package org.inMemoryLogStorage.service;
+package org.LogStorageService.service;
 
-import org.inMemoryLogStorage.models.LogEvent;
-import org.inMemoryLogStorage.storage.InMemoryLogStorage;
+import org.LogStorageService.models.LogEvent;
+import org.LogStorageService.storage.InMemoryLogStorage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

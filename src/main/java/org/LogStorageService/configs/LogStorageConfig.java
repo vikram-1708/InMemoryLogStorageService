@@ -1,7 +1,7 @@
-package org.inMemoryLogStorage.configs;
+package org.LogStorageService.configs;
 
 import lombok.extern.slf4j.Slf4j;
-import org.inMemoryLogStorage.storage.InMemoryLogStorage;
+import org.LogStorageService.storage.InMemoryLogStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

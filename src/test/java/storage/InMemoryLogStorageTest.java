@@ -1,7 +1,7 @@
 package storage;
 
-import org.inMemoryLogStorage.models.LogEvent;
-import org.inMemoryLogStorage.storage.InMemoryLogStorage;
+import org.LogStorageService.models.LogEvent;
+import org.LogStorageService.storage.InMemoryLogStorage;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

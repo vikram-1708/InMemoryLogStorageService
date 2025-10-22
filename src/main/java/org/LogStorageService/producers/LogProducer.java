@@ -1,10 +1,10 @@
-package org.inMemoryLogStorage.producers;
+package org.LogStorageService.producers;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import org.inMemoryLogStorage.models.LogEvent;
-import org.inMemoryLogStorage.storage.InMemoryLogStorage;
+import org.LogStorageService.models.LogEvent;
+import org.LogStorageService.storage.InMemoryLogStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

@@ -1,13 +1,13 @@
-package org.inMemoryLogStorage.controller;
+package org.LogStorageService.controller;
 
-import org.inMemoryLogStorage.models.LogEvent;
-import org.inMemoryLogStorage.service.LogQueryService;
+import org.LogStorageService.models.LogEvent;
+import org.LogStorageService.service.LogQueryService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/logs")
+@RequestMapping("/api/v1/logs")
 @SuppressWarnings("unused")
 public class LogController {
 

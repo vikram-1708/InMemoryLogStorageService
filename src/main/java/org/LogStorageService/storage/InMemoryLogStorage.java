@@ -1,6 +1,6 @@
-package org.inMemoryLogStorage.storage;
+package org.LogStorageService.storage;
 
-import org.inMemoryLogStorage.models.LogEvent;
+import org.LogStorageService.models.LogEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

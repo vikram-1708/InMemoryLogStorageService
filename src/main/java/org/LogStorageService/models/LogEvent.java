@@ -1,4 +1,4 @@
-package org.inMemoryLogStorage.models;
+package org.LogStorageService.models;
 
 public class LogEvent {
 
