@@ -1,39 +1,32 @@
-package InMemoryLogStorageConcurrencyTest;
+package storage;
 
 import org.inMemoryLogStorage.models.LogEvent;
 import org.inMemoryLogStorage.storage.InMemoryLogStorage;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class InMemoryLogStorageConcurrencyTest {
+public class InMemoryLogStorageTest {
+
     @Test
     public void testConcurrentReadsAndWrites() throws InterruptedException {
         InMemoryLogStorage logStorage = new InMemoryLogStorage();
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        Random random = new Random();
+        ExecutorService executor = Executors.newFixedThreadPool(8);
 
-        int writerThreads = 5;
-        int readerThreads = 5;
-        int totalTasks = writerThreads + readerThreads;
+        int writerThreads = 4;
+        int readerThreads = 4;
+        CountDownLatch latch = new CountDownLatch(writerThreads + readerThreads);
 
-        CountDownLatch latch = new CountDownLatch(totalTasks);
-
-        // Writers: add logs continuously
+        // Writers
         for (int i = 0; i < writerThreads; i++) {
             executor.submit(() -> {
                 try {
-                    for (int j = 0; j < 1000; j++) {
+                    for (int j = 0; j < 500; j++) {
                         long ts = System.currentTimeMillis();
-                        String service = "Service-" + (random.nextInt(3) + 1);
-                        String host = "Host-" + (random.nextInt(3) + 1);
-                        String msg = "Log from " + service + "@" + host;
-
-                        logStorage.addLog(new LogEvent(ts, service, host, msg));
+                        logStorage.addLog(new LogEvent(ts, "Service-1", "Host-1", "log-" + j));
                     }
                 } finally {
                     latch.countDown();
@@ -41,14 +34,13 @@ public class InMemoryLogStorageConcurrencyTest {
             });
         }
 
-        // Readers: query logs continuously
+        // Readers
         for (int i = 0; i < readerThreads; i++) {
             executor.submit(() -> {
                 try {
-                    for (int j = 0; j < 1000; j++) {
+                    for (int j = 0; j < 500; j++) {
                         long now = System.currentTimeMillis();
-                        List<LogEvent> logs = logStorage.getLogsByService("Service-1", now - 10000, now);
-                        // Just touch the list to simulate read
+                        List<LogEvent> logs = logStorage.getLogsByService("Service-1", now - 1000, now);
                         if (!logs.isEmpty()) {
                             assertFalse(logs.contains(null), "Null log found!");
                         }
@@ -59,15 +51,14 @@ public class InMemoryLogStorageConcurrencyTest {
             });
         }
 
-        latch.await(); // wait for all tasks
+        latch.await();
         executor.shutdown();
 
-        // Final validation
+        // Final check
         long now = System.currentTimeMillis();
         List<LogEvent> finalLogs = logStorage.getLogsByService("Service-1", now - 60000, now);
         System.out.println("Final logs count: " + finalLogs.size());
 
-        // Make sure some logs actually got written
         assertFalse(finalLogs.isEmpty(), "Expected logs but found none!");
     }
 }

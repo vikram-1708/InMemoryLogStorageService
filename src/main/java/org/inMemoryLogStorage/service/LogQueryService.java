@@ -8,6 +8,7 @@ import java.util.List;
 
 @Service
 public class LogQueryService {
+
     private final InMemoryLogStorage logStorage;
 
     public LogQueryService(InMemoryLogStorage logStorage) {
