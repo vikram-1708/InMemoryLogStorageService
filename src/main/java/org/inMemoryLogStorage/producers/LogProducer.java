@@ -2,8 +2,11 @@ package org.inMemoryLogStorage.producers;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.inMemoryLogStorage.models.LogEvent;
 import org.inMemoryLogStorage.storage.InMemoryLogStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -12,8 +15,10 @@ import java.util.concurrent.Executors;
 
 @Component
 @SuppressWarnings("unused")
+@Slf4j
 public class LogProducer implements Runnable {
 
+    private static final Logger log = LoggerFactory.getLogger(LogProducer.class);
     private final InMemoryLogStorage logStorage;
     private final Random random = new Random();
     private ExecutorService executor;
@@ -32,8 +37,10 @@ public class LogProducer implements Runnable {
             String host = hosts[random.nextInt(hosts.length)];
             String message = "Log message from " + service + "@" + host;
 
-            LogEvent log = new LogEvent(currentTimeMillis, service, host, message);
-            logStorage.addLog(log);
+            LogEvent logEvent = new LogEvent(currentTimeMillis, service, host, message);
+
+            log.debug("Adding log to Log - {} Storage", logEvent);
+            logStorage.addLog(logEvent);
 
             try {
                 Thread.sleep(500);
