@@ -29,14 +29,4 @@ public class LogEvent {
     public String getLogMessage() {
         return logMessage;
     }
-
-    @Override
-    public String toString() {
-        return "LogEvent{" +
-                "timestamp=" + timestamp +
-                ", serviceName='" + serviceName + '\'' +
-                ", hostId='" + hostId + '\'' +
-                ", logMessage='" + logMessage + '\'' +
-                '}';
-    }
 }

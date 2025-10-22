@@ -1,16 +1,22 @@
 package org.inMemoryLogStorage.producers;
 
+import jakarta.annotation.PostConstruct;
 import org.inMemoryLogStorage.models.LogEvent;
 import org.inMemoryLogStorage.storage.InMemoryLogStorage;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
+@Component
+@SuppressWarnings("unused")
 public class LogProducer implements Runnable {
+
     private final InMemoryLogStorage logStorage;
     private final Random random = new Random();
-    private final String[] services = {"service1", "service2", "service3"};
-    private final String[] hosts = {"host1", "host2"};
+    private final String[] services = {"PaymentService", "OrderService", "InventoryService"};
+    private final String[] hosts = {"host1", "host2", "host3", "host4"};
 
+    // Spring injects InMemoryLogStorage bean (from LogStorageConfig)
     public LogProducer(InMemoryLogStorage logStorage) {
         this.logStorage = logStorage;
     }
@@ -33,5 +39,13 @@ public class LogProducer implements Runnable {
                 break;
             }
         }
+    }
+
+    // Start producer thread after Spring context is initialized
+    @PostConstruct
+    public void startProducerThread() {
+        Thread producerThread = new Thread(this, "LogProducer-Thread");
+        producerThread.setDaemon(true);
+        producerThread.start();
     }
 }
