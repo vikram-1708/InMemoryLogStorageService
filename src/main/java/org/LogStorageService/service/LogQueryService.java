@@ -9,21 +9,21 @@ import java.util.List;
 @Service
 public class LogQueryService {
 
-    private final InMemoryLogStorage logStorage;
+    private final InMemoryLogStorage inMemoryLogStorage;
 
-    public LogQueryService(InMemoryLogStorage logStorage) {
-        this.logStorage = logStorage;
+    public LogQueryService(InMemoryLogStorage inMemoryLogStorage) {
+        this.inMemoryLogStorage = inMemoryLogStorage;
     }
 
-    public List<LogEvent> getLogsByService(String service, long from, long to) {
-        return logStorage.getLogsByService(service, from, to);
+    public List<LogEvent> getLogsByService(String serviceName, long from, long to) {
+        return inMemoryLogStorage.getLogsByService(serviceName, from, to);
     }
 
-    public List<LogEvent> getLogsByServiceAndHost(String service, String host, long from, long to) {
-        return logStorage.getLogsByServiceAndHost(service, host, from, to);
+    public List<LogEvent> getLogsByServiceAndHost(String serviceName, String hostId, long from, long to) {
+        return inMemoryLogStorage.getLogsByServiceAndHost(serviceName, hostId, from, to);
     }
 
-    public List<LogEvent> getLogsByHost(String host, long from, long to) {
-        return logStorage.getLogsByHost(host, from, to);
+    public List<LogEvent> getLogsByHost(String hostId, long from, long to) {
+        return inMemoryLogStorage.getLogsByHost(hostId, from, to);
     }
 }

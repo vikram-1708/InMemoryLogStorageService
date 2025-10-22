@@ -1,5 +1,8 @@
 package org.LogStorageService.models;
 
+import lombok.Getter;
+
+@Getter
 public class LogEvent {
 
     private final long timestamp;
@@ -12,22 +15,6 @@ public class LogEvent {
         this.serviceName = serviceName;
         this.hostId = hostId;
         this.logMessage = logMessage;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public String getHostId() {
-        return hostId;
-    }
-
-    public String getLogMessage() {
-        return logMessage;
     }
 
     @Override

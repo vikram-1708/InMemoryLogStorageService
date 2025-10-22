@@ -2,8 +2,6 @@ package org.LogStorageService.configs;
 
 import lombok.extern.slf4j.Slf4j;
 import org.LogStorageService.storage.InMemoryLogStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,11 +11,14 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class LogStorageConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(LogStorageConfig.class);
-
     @Bean
     public InMemoryLogStorage inMemoryLogStorage() {
         log.debug("Creating Bean for InMemoryLogStorage");
-        return new InMemoryLogStorage();
+        try {
+            return new InMemoryLogStorage();
+        } catch (Exception e) {
+            log.error("Failed to create InMemoryLogStorage bean", e);
+            throw e;
+        }
     }
 }
