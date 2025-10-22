@@ -45,18 +45,15 @@ public class InMemoryLogStorage {
      * Space Complexity: O(1) extra per log (stored in 3 indexes: service, host, global)
      */
     public void addLog(LogEvent logEvent) {
-        serviceIndex
-                .computeIfAbsent(logEvent.getServiceName(), k -> new ConcurrentSkipListMap<>())
+        serviceIndex.computeIfAbsent(logEvent.getServiceName(), k -> new ConcurrentSkipListMap<>())
                 .computeIfAbsent(logEvent.getTimestamp(), k -> new ConcurrentLinkedQueue<>())
                 .add(logEvent);
 
-        hostIndex
-                .computeIfAbsent(logEvent.getHostId(), k -> new ConcurrentSkipListMap<>())
+        hostIndex.computeIfAbsent(logEvent.getHostId(), k -> new ConcurrentSkipListMap<>())
                 .computeIfAbsent(logEvent.getTimestamp(), k -> new ConcurrentLinkedQueue<>())
                 .add(logEvent);
 
-        globalIndex
-                .computeIfAbsent(logEvent.getTimestamp(), k -> new ConcurrentLinkedQueue<>())
+        globalIndex.computeIfAbsent(logEvent.getTimestamp(), k -> new ConcurrentLinkedQueue<>())
                 .add(logEvent);
     }
 
