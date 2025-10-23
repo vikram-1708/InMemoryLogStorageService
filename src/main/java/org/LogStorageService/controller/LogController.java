@@ -19,7 +19,7 @@ public class LogController {
         this.logQueryService = logQueryService;
     }
 
-    @GetMapping("/service/{serviceName}")
+    @RequestMapping("/service/{serviceName}")
     public List<LogEvent> getByService(@PathVariable String serviceName,
                                        @RequestParam long from,
                                        @RequestParam long to) {

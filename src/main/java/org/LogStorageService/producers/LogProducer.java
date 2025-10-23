@@ -53,7 +53,7 @@ public class LogProducer implements Runnable {
 
     @PostConstruct
     public void startProducers() {
-        int numProducers = 4; // could be externalized via application.properties
+        int numProducers = 4;
         log.info("Starting {} LogProducer threads", numProducers);
         executor = Executors.newFixedThreadPool(numProducers);
         for (int i = 0; i < numProducers; i++) {

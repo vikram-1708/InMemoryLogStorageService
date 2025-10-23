@@ -2,6 +2,7 @@ package org.LogStorageService.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.LogStorageService.models.LogEvent;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * - ConcurrentLinkedQueue for log buckets (append-only, efficient for write-heavy systems)
  */
 @Slf4j
+@Component
 public class InMemoryLogStorage {
 
     /**
