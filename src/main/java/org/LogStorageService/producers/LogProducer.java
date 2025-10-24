@@ -54,10 +54,10 @@ public class LogProducer {
 
     @PostConstruct
     public void startProducers() {
-        int numProducers = 4;
-        log.info("Starting {} LogProducer tasks", numProducers);
-        executor = Executors.newScheduledThreadPool(numProducers);
-        for (int i = 0; i < numProducers; i++) {
+        int logProducerThreads = 4;
+        log.info("Starting {} LogProducer tasks", logProducerThreads);
+        executor = Executors.newScheduledThreadPool(logProducerThreads);
+        for (int i = 0; i < logProducerThreads; i++) {
             executor.scheduleAtFixedRate(this::produceLog, 0, 500, TimeUnit.MILLISECONDS);
         }
     }
