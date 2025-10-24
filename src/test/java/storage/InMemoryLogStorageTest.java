@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class InMemoryLogStorageTest {
@@ -18,13 +19,14 @@ public class InMemoryLogStorageTest {
 
         int writerThreads = 4;
         int readerThreads = 4;
+        int logsPerWriter = 500;
         CountDownLatch latch = new CountDownLatch(writerThreads + readerThreads);
 
         // Writers
         for (int i = 0; i < writerThreads; i++) {
             executor.submit(() -> {
                 try {
-                    for (int j = 0; j < 500; j++) {
+                    for (int j = 0; j < logsPerWriter; j++) {
                         long ts = System.currentTimeMillis();
                         logStorage.addLog(new LogEvent(ts, "Service-1", "Host-1", "log-" + j));
                     }
@@ -54,11 +56,12 @@ public class InMemoryLogStorageTest {
         latch.await();
         executor.shutdown();
 
-        // Final check
+        // Final log count check
         long now = System.currentTimeMillis();
         List<LogEvent> finalLogs = logStorage.getLogsByService("Service-1", now - 60000, now);
+        int expected = writerThreads * logsPerWriter;
         System.out.println("Final logs count: " + finalLogs.size());
 
-        assertFalse(finalLogs.isEmpty(), "Expected logs but found none!");
+        assertEquals(expected, finalLogs.size(), "Mismatch in final log count!");
     }
 }
