@@ -63,13 +63,13 @@ public class InMemoryLogStorage {
     public List<LogEvent> getLogsByServiceAndHost(String serviceName, String hostId, long startTimeMillis, long endTimeMillis) {
         log.debug("Querying logs by service={} host={} startTimeMillis={} endTimeMillis={}", serviceName, hostId, startTimeMillis, endTimeMillis);
         List<LogEvent> logsByHost = queryIndex(hostIndex.get(hostId), startTimeMillis, endTimeMillis);
-        List<LogEvent> filtered = new ArrayList<>(logsByHost.size());
+        List<LogEvent> logsByServiceAndHost = new ArrayList<>();
         for (LogEvent logEvent : logsByHost) {
             if (logEvent.getServiceName().equals(serviceName)) {
-                filtered.add(logEvent);
+                logsByServiceAndHost.add(logEvent);
             }
         }
-        return filtered;
+        return logsByServiceAndHost;
     }
 
     private List<LogEvent> queryIndex(ConcurrentSkipListMap<Long, Queue<LogEvent>> index, long startTimeMillis, long endTimeMillis) {
