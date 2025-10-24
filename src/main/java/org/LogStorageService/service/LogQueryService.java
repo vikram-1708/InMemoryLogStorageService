@@ -15,15 +15,15 @@ public class LogQueryService {
         this.inMemoryLogStorage = inMemoryLogStorage;
     }
 
-    public List<LogEvent> getLogsByService(String serviceName, long from, long to) {
-        return inMemoryLogStorage.getLogsByService(serviceName, from, to);
+    public List<LogEvent> getLogsByService(String serviceName, long startTimeMillis, long endTimeMillis) {
+        return inMemoryLogStorage.getLogsByService(serviceName, startTimeMillis, endTimeMillis);
     }
 
-    public List<LogEvent> getLogsByServiceAndHost(String serviceName, String hostId, long from, long to) {
-        return inMemoryLogStorage.getLogsByServiceAndHost(serviceName, hostId, from, to);
+    public List<LogEvent> getLogsByServiceAndHost(String serviceName, String hostId, long startTimeMillis, long endTimeMillis) {
+        return inMemoryLogStorage.getLogsByServiceAndHost(serviceName, hostId, startTimeMillis, endTimeMillis);
     }
 
-    public List<LogEvent> getLogsByHost(String hostId, long from, long to) {
-        return inMemoryLogStorage.getLogsByHost(hostId, from, to);
+    public List<LogEvent> getLogsByHost(String hostId, long startTimeMillis, long endTimeMillis) {
+        return inMemoryLogStorage.getLogsByHost(hostId, startTimeMillis, endTimeMillis);
     }
 }

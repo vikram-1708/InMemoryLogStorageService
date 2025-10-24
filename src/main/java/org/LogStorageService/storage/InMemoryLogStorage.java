@@ -25,13 +25,8 @@ public class InMemoryLogStorage {
     private final Map<String, ConcurrentSkipListMap<Long, Queue<LogEvent>>> hostIndex = new ConcurrentHashMap<>();
 
     /**
-     * global timestamp index -> logs
-     */
-    private final ConcurrentSkipListMap<Long, Queue<LogEvent>> globalIndex = new ConcurrentSkipListMap<>();
-
-    /**
      * Adds a log event into storage.
-     * The log is indexed by service, host, and global timestamp.
+     * The log is indexed by service, host.
      */
     public void addLog(LogEvent logEvent) {
         if (Objects.isNull(logEvent)) {
@@ -48,9 +43,6 @@ public class InMemoryLogStorage {
                     .computeIfAbsent(logEvent.getTimestamp(), k -> new ConcurrentLinkedQueue<>())
                     .add(logEvent);
 
-            globalIndex.computeIfAbsent(logEvent.getTimestamp(), k -> new ConcurrentLinkedQueue<>())
-                    .add(logEvent);
-
             log.debug("Added log: {}", logEvent);
         } catch (Exception e) {
             log.error("Failed to add logEvent: {}", logEvent, e);
@@ -58,48 +50,43 @@ public class InMemoryLogStorage {
         }
     }
 
-    public List<LogEvent> getLogsByService(String serviceName, long from, long to) {
-        log.debug("Querying logs by service={} from={} to={}", serviceName, from, to);
-        return queryIndex(serviceIndex.get(serviceName), from, to);
+    public List<LogEvent> getLogsByService(String serviceName, long startTimeMillis, long endTimeMillis) {
+        log.debug("Querying logs by service={} startTimeMillis={} endTimeMillis={}", serviceName, startTimeMillis, endTimeMillis);
+        return queryIndex(serviceIndex.get(serviceName), startTimeMillis, endTimeMillis);
     }
 
-    public List<LogEvent> getLogsByHost(String hostId, long from, long to) {
-        log.debug("Querying logs by host={} from={} to={}", hostId, from, to);
-        return queryIndex(hostIndex.get(hostId), from, to);
+    public List<LogEvent> getLogsByHost(String hostId, long startTimeMillis, long endTimeMillis) {
+        log.debug("Querying logs by host={} startTimeMillis={} endTimeMillis={}", hostId, startTimeMillis, endTimeMillis);
+        return queryIndex(hostIndex.get(hostId), startTimeMillis, endTimeMillis);
     }
 
-    public List<LogEvent> getLogsByServiceAndHost(String serviceName, String hostId, long from, long to) {
-        log.debug("Querying logs by service={} host={} from={} to={}", serviceName, hostId, from, to);
-        List<LogEvent> byHost = queryIndex(hostIndex.get(hostId), from, to);
-        List<LogEvent> filtered = new ArrayList<>(byHost.size());
-        for (LogEvent e : byHost) {
-            if (e.getServiceName().equals(serviceName)) {
-                filtered.add(e);
+    public List<LogEvent> getLogsByServiceAndHost(String serviceName, String hostId, long startTimeMillis, long endTimeMillis) {
+        log.debug("Querying logs by service={} host={} startTimeMillis={} endTimeMillis={}", serviceName, hostId, startTimeMillis, endTimeMillis);
+        List<LogEvent> logsByHost = queryIndex(hostIndex.get(hostId), startTimeMillis, endTimeMillis);
+        List<LogEvent> filtered = new ArrayList<>(logsByHost.size());
+        for (LogEvent logEvent : logsByHost) {
+            if (logEvent.getServiceName().equals(serviceName)) {
+                filtered.add(logEvent);
             }
         }
         return filtered;
     }
 
-    public List<LogEvent> getLogsGlobal(long from, long to) {
-        log.debug("Querying global logs from={} to={}", from, to);
-        return queryIndex(globalIndex, from, to);
-    }
-
-    private List<LogEvent> queryIndex(ConcurrentSkipListMap<Long, Queue<LogEvent>> index, long from, long to) {
-        if (index == null || index.isEmpty()) {
-            log.debug("No logs found for range {} - {}", from, to);
+    private List<LogEvent> queryIndex(ConcurrentSkipListMap<Long, Queue<LogEvent>> index, long startTimeMillis, long endTimeMillis) {
+        if (Objects.isNull(index) || index.isEmpty()) {
+            log.debug("No logs found for range {} - {}", startTimeMillis, endTimeMillis);
             return Collections.emptyList();
         }
 
         try {
-            NavigableMap<Long, Queue<LogEvent>> range = index.subMap(from, true, to, true);
+            NavigableMap<Long, Queue<LogEvent>> range = index.subMap(startTimeMillis, true, endTimeMillis, true);
             List<LogEvent> result = new ArrayList<>();
             for (Queue<LogEvent> logs : range.values()) {
                 result.addAll(logs);
             }
             return result;
         } catch (Exception e) {
-            log.error("Error while querying logs from={} to={}", from, to, e);
+            log.error("Error while querying logs startTimeMillis={} endTimeMillis={}", startTimeMillis, endTimeMillis, e);
             throw e;
         }
     }

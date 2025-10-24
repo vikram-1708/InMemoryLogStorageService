@@ -21,11 +21,11 @@ public class LogController {
 
     @RequestMapping("/service/{serviceName}")
     public List<LogEvent> getByService(@PathVariable String serviceName,
-                                       @RequestParam long from,
-                                       @RequestParam long to) {
-        validateTimeRange(from, to);
-        log.info("Fetching logs for service={} from={} to={}", serviceName, from, to);
-        List<LogEvent> logs = logQueryService.getLogsByService(serviceName, from, to);
+                                       @RequestParam long startTimeMillis,
+                                       @RequestParam long endTimeMillis) {
+        validateTimeRange(startTimeMillis, endTimeMillis);
+        log.info("Fetching logs for service={} startTimeMillis={} endTimeMillis={}", serviceName, startTimeMillis, endTimeMillis);
+        List<LogEvent> logs = logQueryService.getLogsByService(serviceName, startTimeMillis, endTimeMillis);
         log.debug("Found {} logs for service={}", logs.size(), serviceName);
         return logs;
     }
@@ -33,34 +33,34 @@ public class LogController {
     @GetMapping("/service/{serviceName}/host/{hostId}")
     public List<LogEvent> getByServiceAndHost(@PathVariable String serviceName,
                                               @PathVariable String hostId,
-                                              @RequestParam long from,
-                                              @RequestParam long to) {
-        validateTimeRange(from, to);
-        log.info("Fetching logs for service={} host={} from={} to={}", serviceName, hostId, from, to);
-        List<LogEvent> logs = logQueryService.getLogsByServiceAndHost(serviceName, hostId, from, to);
+                                              @RequestParam long startTimeMillis,
+                                              @RequestParam long endTimeMillis) {
+        validateTimeRange(startTimeMillis, endTimeMillis);
+        log.info("Fetching logs for service={} host={} startTimeMillis={} endTimeMillis={}", serviceName, hostId, startTimeMillis, endTimeMillis);
+        List<LogEvent> logs = logQueryService.getLogsByServiceAndHost(serviceName, hostId, startTimeMillis, endTimeMillis);
         log.debug("Found {} logs for service={} host={}", logs.size(), serviceName, hostId);
         return logs;
     }
 
     @GetMapping("/host/{hostId}")
     public List<LogEvent> getByHost(@PathVariable String hostId,
-                                    @RequestParam long from,
-                                    @RequestParam long to) {
-        validateTimeRange(from, to);
-        log.info("Fetching logs for host={} from={} to={}", hostId, from, to);
-        List<LogEvent> logs = logQueryService.getLogsByHost(hostId, from, to);
+                                    @RequestParam long startTimeMillis,
+                                    @RequestParam long endTimeMillis) {
+        validateTimeRange(startTimeMillis, endTimeMillis);
+        log.info("Fetching logs for host={} startTimeMillis={} endTimeMillis={}", hostId, startTimeMillis, endTimeMillis);
+        List<LogEvent> logs = logQueryService.getLogsByHost(hostId, startTimeMillis, endTimeMillis);
         log.debug("Found {} logs for host={}", logs.size(), hostId);
         return logs;
     }
 
     /**
-     * Helper to validate that "from" <= "to".
+     * Helper to validate that "startTimeMillis" <= "endTimeMillis".
      * Throws IllegalArgumentException if invalid.
      */
-    private void validateTimeRange(long from, long to) {
-        if (from > to) {
-            log.warn("Invalid time range: from {} > to={}", from, to);
-            throw new IllegalArgumentException("Invalid time range: 'from' must be <= 'to'");
+    private void validateTimeRange(long startTimeMillis, long endTimeMillis) {
+        if (startTimeMillis > endTimeMillis) {
+            log.warn("Invalid time range: startTimeMillis {} > endTimeMillis {}", startTimeMillis, endTimeMillis);
+            throw new IllegalArgumentException("Invalid time range: 'startTimeMillis' must be <= 'endTimeMillis'");
         }
     }
 }
