@@ -7,64 +7,65 @@ import org.LogStorageService.models.LogEvent;
 import org.LogStorageService.storage.InMemoryLogStorage;
 import org.springframework.stereotype.Component;
 
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
+import java.util.*;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
 @SuppressWarnings("unused")
-public class LogProducer implements Runnable {
+public class LogProducer {
 
     private final InMemoryLogStorage logStorage;
     private final Random random = new Random();
-    private ExecutorService executor;
+    private ScheduledExecutorService executor;
 
-    private final String[] services = {"PaymentService", "OrderService", "InventoryService"};
-    private final String[] hosts = {"host1", "host2", "host3", "host4"};
+    private static final Map<String, String[]> SERVICE_HOSTS = Map.of(
+            "PaymentService", new String[]{"payment-node-1", "payment-node-2", "payment-node-3"},
+            "OrderService", new String[]{"order-node-1", "order-node-2"},
+            "InventoryService", new String[]{"inventory-node-1", "inventory-node-2", "inventory-node-3"}
+    );
+
+    private static final List<String> SERVICES = new ArrayList<>(SERVICE_HOSTS.keySet());
 
     public LogProducer(InMemoryLogStorage logStorage) {
         this.logStorage = logStorage;
     }
 
-    @Override
-    public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                long currentTimeMillis = System.currentTimeMillis();
-                String service = services[random.nextInt(services.length)];
-                String host = hosts[random.nextInt(hosts.length)];
-                String message = "Log message from " + service + "@" + host;
+    private void produceLog() {
+        try {
+            long currentTimeMillis = System.currentTimeMillis();
 
-                LogEvent logEvent = new LogEvent(currentTimeMillis, service, host, message);
+            String service = SERVICES.get(random.nextInt(SERVICES.size()));
 
-                log.debug("Producing log: {}", logEvent);
-                logStorage.addLog(logEvent);
+            String[] hosts = SERVICE_HOSTS.get(service);
+            String host = hosts[random.nextInt(hosts.length)];
 
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                log.info("Producer thread interrupted, shutting down...");
-                Thread.currentThread().interrupt(); // graceful shutdown
-            } catch (Exception e) {
-                log.error("Unexpected error in LogProducer thread", e);
-            }
+            String logMessage = "Log message from " + service + "@" + host;
+            LogEvent logEvent = new LogEvent(currentTimeMillis, service, host, logMessage);
+
+            log.debug("Producing log: {}", logEvent);
+            logStorage.addLog(logEvent);
+        } catch (Exception e) {
+            log.error("Error while producing log", e);
         }
     }
 
     @PostConstruct
     public void startProducers() {
         int numProducers = 4;
-        log.info("Starting {} LogProducer threads", numProducers);
-        executor = Executors.newFixedThreadPool(numProducers);
+        log.info("Starting {} LogProducer tasks", numProducers);
+        executor = Executors.newScheduledThreadPool(numProducers);
         for (int i = 0; i < numProducers; i++) {
-            executor.submit(this);
+            executor.scheduleAtFixedRate(this::produceLog, 0, 500, TimeUnit.MILLISECONDS);
         }
     }
 
     @PreDestroy
     public void stopProducers() {
         if (executor != null) {
-            log.info("Stopping LogProducer threads...");
+            log.info("Stopping LogProducer tasks...");
             executor.shutdownNow();
         }
     }

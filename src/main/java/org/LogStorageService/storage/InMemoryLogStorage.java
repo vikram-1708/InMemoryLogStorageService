@@ -9,19 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-/**
- * Thread-safe in-memory log storage engine.
- * <p>
- * Logs are indexed by:
- * - Service name
- * - Host ID
- * - Global timestamp (all logs across services/hosts)
- * <p>
- * Internally uses:
- * - ConcurrentHashMap for concurrent service/host partitions
- * - ConcurrentSkipListMap for timestamp ordering
- * - ConcurrentLinkedQueue for log buckets (append-only, efficient for write-heavy systems)
- */
+
 @Slf4j
 @Component
 public class InMemoryLogStorage {
@@ -44,9 +32,6 @@ public class InMemoryLogStorage {
     /**
      * Adds a log event into storage.
      * The log is indexed by service, host, and global timestamp.
-     * <p>
-     * Time Complexity: O(log n) (skip-list insert) + O(1) (queue append)
-     * Space Complexity: O(1) extra per log (stored in 3 indexes: service, host, global)
      */
     public void addLog(LogEvent logEvent) {
         if (Objects.isNull(logEvent)) {

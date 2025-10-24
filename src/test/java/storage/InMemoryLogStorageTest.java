@@ -28,7 +28,7 @@ public class InMemoryLogStorageTest {
             tasks.add(() -> {
                 for (int j = 0; j < logsPerWriter; j++) {
                     long ts = System.currentTimeMillis();
-                    logStorage.addLog(new LogEvent(ts, "Service-1", "Host-1", "log-" + j));
+                    logStorage.addLog(new LogEvent(ts, "PaymentService", "payment-node-1", "log-" + j));
                 }
                 return null;
             });
@@ -39,7 +39,7 @@ public class InMemoryLogStorageTest {
             tasks.add(() -> {
                 for (int j = 0; j < 500; j++) {
                     long now = System.currentTimeMillis();
-                    logStorage.getLogsByService("Service-1", now - 1000, now);
+                    logStorage.getLogsByService("PaymentService", now - 1000, now);
                 }
                 return null;
             });
@@ -55,7 +55,7 @@ public class InMemoryLogStorageTest {
 
         // Final log count check
         long now = System.currentTimeMillis();
-        List<LogEvent> finalLogs = logStorage.getLogsByService("Service-1", now - 60000, now);
+        List<LogEvent> finalLogs = logStorage.getLogsByService("PaymentService", now - 60000, now);
         int expected = writerThreads * logsPerWriter;
 
         System.out.println("Final logs count: " + finalLogs.size());
