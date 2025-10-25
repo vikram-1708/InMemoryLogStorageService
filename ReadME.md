@@ -16,8 +16,16 @@ Project Structure:-
 
 - **controller/**
     - `LogController.java` → REST endpoints for querying logs
+    - 
+- **schedulers/**
+- `LogEvictionScheduler.java` → Periodic background task to clear expired logs
 
 
+## Log Retention & Eviction
+- By default, logs are retained for **1 hour** (`RETENTION_MILLIS`).
+- Expired logs are removed using:
+    - `LogEvictionScheduler` → a scheduled task that runs every **30 minute** and clears old logs.
+    - Eviction is safe and does not block concurrent queries/writes.
 
 API Curls for Queries:-
 

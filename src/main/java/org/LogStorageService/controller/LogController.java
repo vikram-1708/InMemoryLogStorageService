@@ -21,8 +21,9 @@ public class LogController {
         this.logQueryService = logQueryService;
     }
 
-    /** No null handling needed for input parameters as @PathVariable and @RequestParam annotations
-     *  internally handles it and throws BadRequestException in case of null paramters
+    /**
+     * No null handling needed for input parameters as @PathVariable and @RequestParam annotations
+     * internally handles it and throws BadRequestException in case of null paramters
      */
     @RequestMapping("/service/{serviceName}")
     public List<LogEvent> getByService(@PathVariable String serviceName,

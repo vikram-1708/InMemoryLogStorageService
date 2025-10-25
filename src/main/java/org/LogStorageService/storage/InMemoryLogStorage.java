@@ -29,7 +29,7 @@ public class InMemoryLogStorage {
     /**
      * Adds a log event into storage.
      * The log is indexed by service, host.
-     *
+     * <p>
      * While adding logs also we could do the logs eviction in below way also other than scheduler,
      * but to avoid higher computation to do it on every log write (considering it as high write throughput system)
      * we could maintain a 'lastEvictionTime' and based on that only we will do the eviction,

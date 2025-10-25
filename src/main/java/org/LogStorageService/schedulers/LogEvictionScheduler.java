@@ -16,7 +16,7 @@ public class LogEvictionScheduler {
         this.logStorage = logStorage;
     }
 
-    @Scheduled(fixedRate = 60* 1000)
+    @Scheduled(fixedRate = 30 * 60 * 1000)
     public void evictOldLogs() {
         logStorage.evictOldLogs();
     }
