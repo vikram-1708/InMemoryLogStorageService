@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 @Component
 public class InMemoryLogStorage {
 
-    private static final long RETENTION_MILLIS = 60 * 60 * 1000; // 1 hour
+    private static final long RETENTION_MILLIS = 60 * 60 * 1000;
 
     /**
      * serviceName -> (timestamp -> logs)
@@ -29,6 +29,11 @@ public class InMemoryLogStorage {
     /**
      * Adds a log event into storage.
      * The log is indexed by service, host.
+     *
+     * While adding logs also we could do the logs eviction in below way also other than scheduler,
+     * but to avoid higher computation to do it on every log write (considering it as high write throughput system)
+     * we could maintain a 'lastEvictionTime' and based on that only we will do the eviction,
+     * by this way we wont need a separate scheduler to do log eviction.
      */
     public void addLog(LogEvent logEvent) {
         if (Objects.isNull(logEvent)) {

@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class LogEvent {
 
-    private final long timestamp; // 8bytes
+    private final long timestamp; // 8 bytes
     private final String serviceName; // 40 bytes
     private final String hostId; // 40 bytes
     private final String logMessage; // 100 bytes
