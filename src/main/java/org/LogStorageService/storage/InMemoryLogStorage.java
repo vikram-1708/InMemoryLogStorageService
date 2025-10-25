@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 @Component
 public class InMemoryLogStorage {
 
+    private static final long RETENTION_MILLIS = 60 * 60 * 1000; // 1 hour
+
     /**
      * serviceName -> (timestamp -> logs)
      */
@@ -88,6 +90,25 @@ public class InMemoryLogStorage {
         } catch (Exception e) {
             log.error("Error while querying logs startTimeMillis={} endTimeMillis={}", startTimeMillis, endTimeMillis, e);
             throw e;
+        }
+    }
+
+    public void evictOldLogs() {
+        long cutoffTime = System.currentTimeMillis() - RETENTION_MILLIS;
+        log.info("Evicting logs older than {}", cutoffTime);
+
+        evictFromIndex(serviceIndex, cutoffTime);
+        evictFromIndex(hostIndex, cutoffTime);
+    }
+
+    private void evictFromIndex(Map<String, ConcurrentSkipListMap<Long, Queue<LogEvent>>> index, long cutoffTime) {
+        for (ConcurrentSkipListMap<Long, Queue<LogEvent>> map : index.values()) {
+            try {
+                NavigableMap<Long, Queue<LogEvent>> oldLogs = map.headMap(cutoffTime, false);
+                oldLogs.clear();
+            } catch (Exception e) {
+                log.error("Error while evicting logs before {}", cutoffTime, e);
+            }
         }
     }
 }
